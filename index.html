@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discrete Mathematics - Exam Prep Analysis</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- MathJax for LaTeX Rendering -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                enableMenu: false
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin: auto;
+            height: 300px;
+        }
+
+        .nav-active {
+            background-color: #eef2ff;
+            color: #4338ca;
+            border-right: 4px solid #4f46e5;
+        }
+
+        .roadmap-content {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            max-height: 0;
+            opacity: 0;
+        }
+        .roadmap-content.open {
+            max-height: 1500px;
+            opacity: 1;
+            padding-bottom: 1rem;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .mjx-container {
+            margin: 0 !important;
+            display: inline-block !important;
+        }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden antialiased">
+
+    <!-- Sidebar Navigation -->
+    <aside class="w-64 bg-white border-r border-slate-200 flex flex-col shadow-sm z-10 flex-shrink-0 hidden md:flex">
+        <div class="p-6 border-b border-slate-200">
+            <h1 class="text-xl font-bold text-indigo-700 tracking-tight flex items-center gap-2">
+                <span>📘</span> DM Exam Prep
+            </h1>
+            <p class="text-[10px] uppercase tracking-widest font-semibold text-slate-400 mt-1">Study Companion</p>
+        </div>
+        <nav class="flex-1 overflow-y-auto py-4">
+            <ul class="space-y-1" id="nav-list"></ul>
+        </nav>
+        <div class="p-4 border-t border-slate-200 text-[11px] text-slate-400 text-center italic">
+            Focus: March 11th Midterm
+        </div>
+    </aside>
+
+    <!-- Mobile Header -->
+    <div class="md:hidden fixed top-0 w-full bg-white border-b border-slate-200 z-20 flex justify-between items-center p-4 shadow-sm">
+        <h1 class="text-lg font-bold text-indigo-700">📘 DM Exam Prep</h1>
+        <button id="mobile-menu-btn" class="text-2xl text-slate-600 focus:outline-none">☰</button>
+    </div>
+    
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden fixed inset-0 bg-slate-800 bg-opacity-50 z-30">
+        <div class="bg-white w-64 h-full shadow-lg flex flex-col">
+            <div class="p-4 border-b flex justify-between items-center bg-slate-50">
+                <span class="font-bold text-indigo-700 text-sm">Navigation</span>
+                <button id="close-menu-btn" class="text-xl text-slate-600">✕</button>
+            </div>
+            <nav class="flex-1 overflow-y-auto py-2" id="mobile-nav-list"></nav>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden mt-16 md:mt-0 bg-slate-50 relative">
+        
+        <!-- Top Action Bar -->
+        <div class="bg-white border-b border-slate-200 p-4 flex flex-wrap gap-3 items-center justify-between z-10 shadow-sm">
+            <div class="flex gap-3">
+                <a href="https://notebooklm.google.com/notebook/56229c4c-bd04-4eee-b39d-ab7fdbafc5fb" target="_blank" 
+                   class="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-full transition-all shadow-md hover:shadow-lg active:scale-95">
+                    <span>📔</span> NotebookLM
+                </a>
+                <a href="https://drive.google.com/drive/folders/1t7FW7wQaKyCu-M4KZ5OL5xi8JsOEXUJc?usp=sharing" target="_blank" 
+                   class="flex items-center gap-2 px-5 py-2.5 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-full transition-all border border-slate-200 shadow-sm hover:border-indigo-300 active:scale-95">
+                    <span>📂</span> Materials
+                </a>
+            </div>
+            <div class="hidden lg:flex items-center gap-4 text-xs font-medium text-slate-400">
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> System Ready</span>
+                <span class="border-l pl-4 border-slate-200">Exam: Wed, April 1st</span>
+            </div>
+        </div>
+
+        <div id="content-area" class="flex-1 overflow-y-auto p-6 lg:p-12 scroll-smooth">
+            
+            <!-- SECTION 1: Overview & Pattern Analysis -->
+            <section id="sec-patterns" class="content-section">
+                <header class="mb-10 text-center lg:text-left">
+                    <h2 class="text-4xl font-black text-slate-900 mb-3 flex flex-wrap items-center justify-center lg:justify-start gap-3">
+                        <span class="text-indigo-600">📊</span> Phase 1: Question Pattern Analysis
+                    </h2>
+                    <p class="text-slate-500 text-lg max-w-3xl">
+                        A data-driven breakdown of the Midterm structure. Based on Spring 2023 papers, this identifies the highest ROI topics for your time.
+                    </p>
+                </header>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-12">
+                    <!-- Chart Card -->
+                    <div class="bg-white p-8 rounded-3xl shadow-xl border border-slate-100 relative overflow-hidden">
+                        <h3 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+                            Weight Distribution <span class="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded uppercase">Historical</span>
+                        </h3>
+                        <div class="chart-container">
+                            <canvas id="questionTypesChart"></canvas>
+                        </div>
+                        <p class="text-sm text-center text-slate-500 mt-6 font-medium">
+                            Calculations and logic evaluations carry the most weight in past papers.
+                        </p>
+                    </div>
+
+                    <!-- Findings -->
+                    <div class="space-y-6">
+                        <div class="glass-card p-8 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
+                            <h3 class="text-lg font-bold text-slate-800 mb-5 border-b border-slate-100 pb-3">Core Exam Observations</h3>
+                            <ul class="space-y-4">
+                                <li class="flex items-start gap-3">
+                                    <div class="bg-indigo-100 p-1 rounded mt-1"><span class="block w-2 h-2 bg-indigo-600 rounded-sm"></span></div>
+                                    <span class="text-sm text-slate-700"><strong>High Probability:</strong> Truth tables for compound propositions and counting rules ($P$ & $C$) consistently appear as 5+ mark questions.</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <div class="bg-indigo-100 p-1 rounded mt-1"><span class="block w-2 h-2 bg-indigo-600 rounded-sm"></span></div>
+                                    <span class="text-sm text-slate-700"><strong>Direct Marks:</strong> Proving $A \times B \neq B \times A$ and differentiating One-to-One/Onto are standard Part 'b' questions.</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <div class="bg-indigo-100 p-1 rounded mt-1"><span class="block w-2 h-2 bg-indigo-600 rounded-sm"></span></div>
+                                    <span class="text-sm text-slate-700"><strong>Group Strategy:</strong> Answer 2 out of 3. Typically, Group A focuses on Ch 1 & 2, while Group B hits Ch 3 hard.</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bg-amber-50 p-8 rounded-3xl border border-amber-100">
+                            <h3 class="text-sm font-bold text-amber-800 mb-3 flex items-center gap-2">
+                                <span>⚠️</span> Preparation Gap Alert
+                            </h3>
+                            <p class="text-xs text-amber-700 leading-relaxed">
+                                Past papers include the <strong>Pigeonhole Principle</strong> and the <strong>Permutation Proof</strong> $P(n,r) = C(n,r) \cdot P(r,r)$. Study these from the textbook sections as they are missing from some slide summaries.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 2: Topic Priority Matrix -->
+            <section id="sec-priority" class="content-section hidden">
+                <header class="mb-10">
+                    <h2 class="text-3xl font-black text-slate-900 mb-2 flex items-center gap-3">
+                        <span>🧠</span> Phase 3: Priority Matrix
+                    </h2>
+                </header>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-white rounded-3xl shadow-sm border-t-8 border-rose-500 border-x border-b border-slate-100 overflow-hidden">
+                        <div class="bg-rose-50 p-6 border-b border-rose-100">
+                            <h3 class="font-bold text-rose-800 text-lg">🔴 High Focus</h3>
+                            <p class="text-[10px] text-rose-600 mt-1 uppercase font-bold tracking-widest">Guaranteed Presence</p>
+                        </div>
+                        <ul class="p-6 space-y-4" id="list-high-priority"></ul>
+                    </div>
+                    <div class="bg-white rounded-3xl shadow-sm border-t-8 border-amber-500 border-x border-b border-slate-100 overflow-hidden">
+                        <div class="bg-amber-50 p-6 border-b border-amber-100">
+                            <h3 class="font-bold text-amber-800 text-lg">🟡 Medium Focus</h3>
+                            <p class="text-[10px] text-amber-600 mt-1 uppercase font-bold tracking-widest">High Probability</p>
+                        </div>
+                        <ul class="p-6 space-y-4" id="list-medium-priority"></ul>
+                    </div>
+                    <div class="bg-white rounded-3xl shadow-sm border-t-8 border-emerald-500 border-x border-b border-slate-100 overflow-hidden">
+                        <div class="bg-emerald-50 p-6 border-b border-emerald-100">
+                            <h3 class="font-bold text-emerald-800 text-lg">🟢 Core Context</h3>
+                            <p class="text-[10px] text-emerald-600 mt-1 uppercase font-bold tracking-widest">Fundamental Knowledge</p>
+                        </div>
+                        <ul class="p-6 space-y-4" id="list-low-priority"></ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 3: Sequential Roadmap -->
+            <section id="sec-roadmap" class="content-section hidden">
+                <header class="mb-10">
+                    <h2 class="text-3xl font-black text-slate-900 mb-2 flex items-center gap-3">
+                        <span>📚</span> Phase 2 & 4: Study Roadmap
+                    </h2>
+                </header>
+                <div class="space-y-6" id="roadmap-container"></div>
+            </section>
+
+            <!-- SECTION 4: Exam Strategy -->
+            <section id="sec-strategy" class="content-section hidden">
+                <header class="mb-10">
+                    <h2 class="text-3xl font-black text-slate-900 mb-2 flex items-center gap-3">
+                        <span>🎯</span> Phase 5: Strategy & Tactics
+                    </h2>
+                </header>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <div class="bg-indigo-600 p-1 rounded-3xl shadow-xl">
+                        <div class="bg-white p-8 rounded-[1.4rem]">
+                            <h3 class="text-2xl font-black text-indigo-900 mb-6">The Quick Wins</h3>
+                            <div class="space-y-6">
+                                <div class="flex gap-4 items-start group">
+                                    <div class="bg-indigo-600 text-white rounded-xl w-8 h-8 flex items-center justify-center flex-shrink-0 font-bold">1</div>
+                                    <div>
+                                        <h4 class="font-bold text-slate-800">Truth Tables (5.5 Marks)</h4>
+                                        <p class="text-sm text-slate-500 mt-1">Mechanical marks. Master the implication ($\rightarrow$). $(p \rightarrow q) \vee (\neg p \rightarrow q)$ is a recurring favorite.</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-4 items-start group">
+                                    <div class="bg-indigo-600 text-white rounded-xl w-8 h-8 flex items-center justify-center flex-shrink-0 font-bold">2</div>
+                                    <div>
+                                        <h4 class="font-bold text-slate-800">Set Equality Proofs</h4>
+                                        <p class="text-sm text-slate-500 mt-1">Proving $A \times B \neq B \times A$. Define your sets $A=\{a,b\}$ and $B=\{1,2\}$ and show specific mismatched pairs like $(a, 1) \neq (1, a)$.</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-4 items-start group">
+                                    <div class="bg-indigo-600 text-white rounded-xl w-8 h-8 flex items-center justify-center flex-shrink-0 font-bold">3</div>
+                                    <div>
+                                        <h4 class="font-bold text-slate-800">Double Summation</h4>
+                                        <p class="text-sm text-slate-500 mt-1">Solve $\sum \sum i$ by evaluating the inner loop first. It's essentially simple arithmetic.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-6">
+                        <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
+                            <h3 class="text-xl font-bold text-slate-800 mb-4">Critical Logic Translations</h3>
+                            <div class="bg-slate-50 p-4 rounded-xl space-y-3 font-medium text-slate-700 text-sm">
+                                <div class="flex justify-between border-b pb-2"><span>"p only if q"</span> <span class="text-indigo-600">$p \rightarrow q$</span></div>
+                                <div class="flex justify-between border-b pb-2"><span>"p is necessary for q"</span> <span class="text-indigo-600">$q \rightarrow p$</span></div>
+                                <div class="flex justify-between border-b pb-2"><span>"neither p nor q"</span> <span class="text-indigo-600">$\neg p \wedge \neg q$</span></div>
+                                <div class="flex justify-between"><span>"p is sufficient for q"</span> <span class="text-indigo-600">$p \rightarrow q$</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <footer class="mt-20 pt-10 border-t border-slate-200 text-center text-xs text-slate-400 pb-12 flex flex-col items-center">
+                <p class="mb-2">Discrete Mathematics Exam Preparation Analysis Dashboard</p>
+                <p>Southern University Bangladesh | CSE Dept</p>
+                <p class="mt-6 font-black text-indigo-500 tracking-widest uppercase bg-indigo-50 px-4 py-2 rounded-full">Developed by Rafsan</p>
+            </footer>
+
+        </div>
+        
+        <div class="fixed bottom-6 right-8 text-[9px] text-slate-300 font-mono hidden xl:block pointer-events-none select-none">
+            SOUTHERN_UNI_MAR_2026_PREP
+        </div>
+    </main>
+
+    <script>
+        const navItems = [
+            { id: 'sec-patterns', icon: '📊', label: 'Pattern Analysis' },
+            { id: 'sec-priority', icon: '🧠', label: 'Priority Matrix' },
+            { id: 'sec-roadmap', icon: '📚', label: 'Study Roadmap' },
+            { id: 'sec-strategy', icon: '🎯', label: 'Exam Strategy' }
+        ];
+
+        const roadmapData = [
+            {
+                chapter: "Chapter 1: Logic & Proofs",
+                topics: [
+                    { name: "Truth Tables (Compound)", slide: "21, 24", priority: "High", type: "Calculation", desc: "Evaluating $(p \\rightarrow q) \\vee (\\neg p \\rightarrow q)$ and Tautologies." },
+                    { name: "Logic Implications", slide: "10", priority: "High", type: "Translation", desc: "Symbolic form for 'Neither/Nor', 'Necessary', and 'Sufficient'." },
+                    { name: "Predicates & Quantifiers", slide: "43-45", priority: "Medium", type: "Mixed", desc: "Universal $\\forall$ and Existential $\\exists$ arguments." }
+                ]
+            },
+            {
+                chapter: "Chapter 2: Structures & Sums",
+                topics: [
+                    { name: "Cartesian Product Proof", slide: "15", priority: "High", type: "Proof", desc: "Showing $A \\times B \\neq B \\times A$ using set pairs." },
+                    { name: "Function Mapping", slide: "28-36", priority: "High", type: "Diagrams", desc: "One-to-One vs Onto differentiation." },
+                    { name: "Summations & Sequences", slide: "42-47", priority: "High", type: "Calculation", desc: "Double sums $\\sum\\sum$ and $n$-th term formulas $a_n$." }
+                ]
+            },
+            {
+                chapter: "Chapter 3: Counting Theory",
+                topics: [
+                    { name: "Sum & Product Rules", slide: "10", priority: "High", type: "Mixed", desc: "Sequential tasks vs independent events." },
+                    { name: "Permutation Proof", slide: "Textbook", priority: "High", type: "Proof", desc: "Algebraic proof of $P(n,r) = C(n,r) \\cdot P(r,r)$." },
+                    { name: "Pigeonhole Principle", slide: "Textbook", priority: "Medium", type: "Context", desc: "Application for shared properties." }
+                ]
+            }
+        ];
+
+        function initNavigation() {
+            const deskNav = document.getElementById('nav-list');
+            const mobNav = document.getElementById('mobile-nav-list');
+            navItems.forEach((item, index) => {
+                const liDesk = document.createElement('li');
+                liDesk.innerHTML = `<button onclick="switchSection('${item.id}', this)" class="w-full text-left px-6 py-3.5 text-sm font-bold transition-all hover:bg-slate-50 ${index === 0 ? 'nav-active' : 'text-slate-500'}">
+                                    <span class="mr-3 text-lg">${item.icon}</span> ${item.label}
+                                </button>`;
+                deskNav.appendChild(liDesk);
+                const liMob = document.createElement('li');
+                liMob.innerHTML = `<button onclick="switchSection('${item.id}', this); closeMobileMenu();" class="w-full text-left px-6 py-4 text-base font-bold transition-all hover:bg-slate-50 ${index === 0 ? 'nav-active' : 'text-slate-500'}">
+                                    <span class="mr-3 text-xl">${item.icon}</span> ${item.label}
+                                </button>`;
+                mobNav.appendChild(liMob);
+            });
+        }
+
+        window.switchSection = function(sectionId, btnElement) {
+            document.querySelectorAll('.content-section').forEach(sec => sec.classList.add('hidden'));
+            document.getElementById(sectionId).classList.remove('hidden');
+            document.querySelectorAll('#nav-list button, #mobile-nav-list button').forEach(btn => {
+                btn.classList.remove('nav-active');
+                btn.classList.add('text-slate-500');
+            });
+            document.querySelectorAll(`button[onclick*="${sectionId}"]`).forEach(btn => {
+                btn.classList.add('nav-active');
+                btn.classList.remove('text-slate-500');
+            });
+            document.getElementById('content-area').scrollTop = 0;
+            if (window.MathJax) MathJax.typesetPromise();
+        };
+
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const closeMenuBtn = document.getElementById('close-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenuBtn.addEventListener('click', () => mobileMenu.classList.remove('hidden'));
+        closeMenuBtn.addEventListener('click', closeMobileMenu);
+        function closeMobileMenu() { mobileMenu.classList.add('hidden'); }
+
+        function renderPriorityMatrix() {
+            const highList = document.getElementById('list-high-priority');
+            const medList = document.getElementById('list-medium-priority');
+            const lowList = document.getElementById('list-low-priority');
+            roadmapData.forEach(chapter => {
+                chapter.topics.forEach(topic => {
+                    const li = `<li class="flex items-center justify-between gap-2">
+                                    <div class="text-sm font-semibold text-slate-800">${topic.name}</div>
+                                    <div class="text-[9px] text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100 font-mono">Ch ${chapter.chapter.match(/\d/)[0]}</div>
+                                </li>`;
+                    if (topic.priority === "High") highList.innerHTML += li;
+                    else if (topic.priority === "Medium") medList.innerHTML += li;
+                    else lowList.innerHTML += li;
+                });
+            });
+        }
+
+        function renderRoadmap() {
+            const container = document.getElementById('roadmap-container');
+            roadmapData.forEach((chapter, index) => {
+                let topicsHtml = chapter.topics.map(topic => {
+                    const pColor = topic.priority === 'High' ? 'text-rose-600 bg-rose-50' : 'text-amber-600 bg-amber-50';
+                    return `
+                        <div class="p-4 border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-slate-800 text-base mb-1">${topic.name}</h4>
+                                    <p class="text-xs text-slate-500">${topic.desc}</p>
+                                    <div class="text-[10px] text-slate-400 mt-2 uppercase font-bold tracking-tighter">Slide: ${topic.slide}</div>
+                                </div>
+                                <div class="flex gap-2">
+                                    <span class="px-2.5 py-1 text-[10px] font-black rounded-full ${pColor}">${topic.priority}</span>
+                                    <span class="px-2.5 py-1 text-[10px] font-black rounded-full bg-indigo-50 text-indigo-600">${topic.type}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                container.innerHTML += `
+                    <div class="bg-white border border-slate-200 rounded-[2rem] overflow-hidden shadow-sm">
+                        <button onclick="toggleAccordion('acc-${index}')" class="w-full flex items-center justify-between p-6 hover:bg-slate-50">
+                            <h3 class="font-black text-xl text-slate-900 tracking-tight">${chapter.chapter}</h3>
+                            <span id="icon-acc-${index}" class="text-indigo-400 transform transition-transform duration-300">▼</span>
+                        </button>
+                        <div id="acc-${index}" class="roadmap-content bg-white">
+                            <div class="px-2 pb-2">${topicsHtml}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            setTimeout(() => toggleAccordion('acc-0'), 100);
+        }
+
+        window.toggleAccordion = function(id) {
+            const el = document.getElementById(id);
+            const icon = document.getElementById('icon-' + id);
+            if(el.classList.contains('open')) {
+                el.classList.remove('open');
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                el.classList.add('open');
+                icon.style.transform = 'rotate(180deg)';
+            }
+        };
+
+        function renderChart() {
+            const ctx = document.getElementById('questionTypesChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Problem Solving', 'Theory / Definitions', 'Proofs', 'Logic Translation'],
+                    datasets: [{
+                        data: [45, 20, 20, 15],
+                        backgroundColor: ['#4f46e5', '#10b981', '#8b5cf6', '#f59e0b'],
+                        hoverBackgroundColor: ['#4338ca', '#059669', '#7c3aed', '#d97706'],
+                        borderWidth: 6,
+                        borderColor: '#ffffff',
+                        borderRadius: 8,
+                        hoverOffset: 12
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                                padding: 20,
+                                font: { size: 11, weight: 'bold', family: 'Inter' },
+                                color: '#64748b'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#1e293b',
+                            padding: 12,
+                            cornerRadius: 10
+                        }
+                    },
+                    cutout: '75%'
+                }
+            });
+        }
+
+        window.onload = () => {
+            initNavigation();
+            renderPriorityMatrix();
+            renderRoadmap();
+            renderChart();
+            if (window.MathJax) MathJax.typesetPromise();
+        };
+    </script>
+</body>
+</html>
