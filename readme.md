@@ -2,7 +2,7 @@
 
 A clean, interactive study guide dashboard for the **Discrete Mathematics** midterm at **Southern University Bangladesh (CSE Dept)**. Built with vanilla HTML, CSS, and JavaScript — no frameworks, no build tools.
 
-> **Developed by [Rafsan](https://github.com/rafsan)**
+> **Developed by [Rafsan](https://github.com/rafsannn)**
 
 ---
 
