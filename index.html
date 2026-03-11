@@ -1,483 +1,1037 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discrete Mathematics - Exam Prep Analysis</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- MathJax for LaTeX Rendering -->
-    <script>
-        window.MathJax = {
-            tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']],
-                displayMath: [['$$', '$$'], ['\\[', '\\]']],
-                processEscapes: true
-            },
-            options: {
-                enableMenu: false
-            }
-        };
-    </script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Discrete Mathematics — Exam Study Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #18181f;
+    --border: rgba(255,255,255,0.07);
+    --red: #ff3c3c;
+    --amber: #ffb800;
+    --green: #00e676;
+    --blue: #3d8bff;
+    --purple: #b668ff;
+    --text: #e8e8f0;
+    --muted: #6b6b80;
+    --accent: #ff3c3c;
+  }
 
-    <style>
-        body {
-            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-            background-color: #f8fafc;
-            color: #1e293b;
-        }
-        
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        .chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 400px;
-            margin: auto;
-            height: 300px;
-        }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
 
-        .nav-active {
-            background-color: #eef2ff;
-            color: #4338ca;
-            border-right: 4px solid #4f46e5;
-        }
+  /* ANIMATED GRID BACKGROUND */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,60,60,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,60,60,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
 
-        .roadmap-content {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow: hidden;
-            max-height: 0;
-            opacity: 0;
-        }
-        .roadmap-content.open {
-            max-height: 1500px;
-            opacity: 1;
-            padding-bottom: 1rem;
-        }
+  /* HERO */
+  .hero {
+    position: relative;
+    z-index: 1;
+    padding: 80px 48px 60px;
+    max-width: 1200px;
+    margin: 0 auto;
+    border-bottom: 1px solid var(--border);
+  }
 
-        .glass-card {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(226, 232, 240, 0.8);
-        }
+  .tag {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--red);
+    border: 1px solid var(--red);
+    padding: 4px 12px;
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.1s forwards;
+  }
 
-        .mjx-container {
-            margin: 0 !important;
-            display: inline-block !important;
-        }
-    </style>
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(52px, 8vw, 96px);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    color: #fff;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.2s forwards;
+  }
+
+  h1 span {
+    color: var(--red);
+    font-style: italic;
+    font-family: 'Libre Baskerville', serif;
+  }
+
+  .hero-sub {
+    margin-top: 28px;
+    color: var(--muted);
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    max-width: 560px;
+    line-height: 1.7;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.35s forwards;
+  }
+
+  .hero-meta {
+    margin-top: 40px;
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.55s forwards;
+  }
+
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .meta-label {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .meta-value {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  /* HERO BUTTONS */
+  .hero-buttons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 36px;
+    margin-bottom: 8px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.4s forwards;
+  }
+
+  .hero-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    padding: 10px 22px;
+    border-radius: 2px;
+    font-weight: 500;
+    transition: transform 0.18s, box-shadow 0.18s, background 0.18s;
+    cursor: pointer;
+  }
+
+  .hero-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+
+  .btn-notebook {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: var(--text);
+  }
+
+  .btn-notebook:hover {
+    background: rgba(255,255,255,0.11);
+    border-color: rgba(255,255,255,0.25);
+  }
+
+  .btn-materials {
+    background: var(--red);
+    border: 1px solid var(--red);
+    color: #fff;
+  }
+
+  .btn-materials:hover {
+    background: #ff5555;
+    box-shadow: 0 8px 24px rgba(255,60,60,0.3);
+  }
+
+  /* DEV CREDIT */
+  .dev-credit {
+    position: fixed;
+    bottom: 18px;
+    right: 22px;
+    z-index: 200;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: rgba(10,10,15,0.85);
+    border: 1px solid var(--border);
+    padding: 6px 12px;
+    backdrop-filter: blur(8px);
+    pointer-events: none;
+  }
+
+  /* PHASE LABEL */
+  .phase-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--red);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 12px;
+  }
+
+  /* SECTIONS */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 48px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  section {
+    padding-top: 72px;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s, transform 0.6s;
+  }
+
+  section.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    margin-bottom: 36px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--red);
+    letter-spacing: 0.1em;
+  }
+
+  h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(22px, 3vw, 30px);
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.02em;
+  }
+
+  /* PRIORITY CARDS GRID */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+    cursor: default;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px;
+    height: 100%;
+  }
+
+  .card.high::before { background: var(--red); }
+  .card.medium::before { background: var(--amber); }
+  .card.low::before { background: var(--green); }
+
+  .card:hover {
+    border-color: rgba(255,255,255,0.15);
+    transform: translateY(-2px);
+  }
+
+  .card-priority {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .card.high .card-priority { color: var(--red); }
+  .card.medium .card-priority { color: var(--amber); }
+  .card.low .card-priority { color: var(--green); }
+
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    display: inline-block;
+  }
+
+  .card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+
+  .card p {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  /* TABLE */
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+  }
+
+  thead tr {
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  th {
+    text-align: left;
+    padding: 14px 20px;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  td {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: top;
+    line-height: 1.55;
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  tr:hover td {
+    background: rgba(255,255,255,0.02);
+  }
+
+  .ch-badge {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    padding: 2px 8px;
+    border-radius: 2px;
+    font-weight: 500;
+  }
+
+  .ch1 { background: rgba(61,139,255,0.15); color: var(--blue); border: 1px solid rgba(61,139,255,0.3); }
+  .ch2 { background: rgba(182,104,255,0.15); color: var(--purple); border: 1px solid rgba(182,104,255,0.3); }
+  .ch3 { background: rgba(0,230,118,0.12); color: var(--green); border: 1px solid rgba(0,230,118,0.25); }
+
+  /* ROADMAP */
+  .roadmap {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+  }
+
+  .roadmap-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 28px;
+    position: relative;
+  }
+
+  .roadmap-block h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    letter-spacing: -0.01em;
+  }
+
+  .roadmap-item {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 14px;
+    align-items: flex-start;
+  }
+
+  .roadmap-item:last-child { margin-bottom: 0; }
+
+  .ri-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+
+  .ri-dot.high { background: var(--red); }
+  .ri-dot.medium { background: var(--amber); }
+  .ri-dot.low { background: var(--green); }
+
+  .ri-content { flex: 1; }
+
+  .ri-title {
+    font-size: 13px;
+    color: var(--text);
+    margin-bottom: 2px;
+    font-weight: 500;
+  }
+
+  .ri-type {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* EXAM STRATEGY */
+  .strategy-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+  }
+
+  .strategy-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .strategy-card:hover { border-color: rgba(255,60,60,0.3); }
+
+  .strategy-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 48px;
+    font-weight: 800;
+    color: rgba(255,255,255,0.04);
+    position: absolute;
+    top: 12px; right: 20px;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .strategy-icon {
+    font-size: 22px;
+    margin-bottom: 14px;
+  }
+
+  .strategy-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+  }
+
+  .strategy-card p {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* PATTERN ANALYSIS */
+  .patterns-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  @media (max-width: 640px) {
+    .patterns-grid { grid-template-columns: 1fr; }
+    .hero { padding: 60px 24px 48px; }
+    .container { padding: 0 24px 60px; }
+  }
+
+  .pattern-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 28px;
+  }
+
+  .pattern-box h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 18px;
+    letter-spacing: -0.01em;
+  }
+
+  .pattern-item {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    font-size: 12.5px;
+    color: var(--text);
+    line-height: 1.55;
+  }
+
+  .pattern-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+  .pattern-icon {
+    color: var(--red);
+    flex-shrink: 0;
+    font-style: normal;
+  }
+
+  /* HIGHLIGHT CALLOUT */
+  .callout {
+    background: rgba(255,60,60,0.06);
+    border: 1px solid rgba(255,60,60,0.2);
+    border-left: 3px solid var(--red);
+    padding: 20px 24px;
+    margin-top: 20px;
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.65;
+  }
+
+  .callout strong { color: var(--red); }
+
+  /* FOOTER */
+  footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 40px 24px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* NAV */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,10,15,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 48px;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+  }
+
+  .nav a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 16px 20px;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+    white-space: nowrap;
+  }
+
+  .nav a:hover { color: var(--text); border-bottom-color: var(--red); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 3px; }
+</style>
 </head>
-<body class="flex h-screen overflow-hidden antialiased">
+<body>
 
-    <!-- Sidebar Navigation -->
-    <aside class="w-64 bg-white border-r border-slate-200 flex flex-col shadow-sm z-10 flex-shrink-0 hidden md:flex">
-        <div class="p-6 border-b border-slate-200">
-            <h1 class="text-xl font-bold text-indigo-700 tracking-tight flex items-center gap-2">
-                <span>📘</span> DM Exam Prep
-            </h1>
-            <p class="text-[10px] uppercase tracking-widest font-semibold text-slate-400 mt-1">Study Companion</p>
-        </div>
-        <nav class="flex-1 overflow-y-auto py-4">
-            <ul class="space-y-1" id="nav-list"></ul>
-        </nav>
-        <div class="p-4 border-t border-slate-200 text-[11px] text-slate-400 text-center italic">
-            Focus: March 11th Midterm
-        </div>
-    </aside>
+<nav class="nav">
+  <a href="#patterns">Patterns</a>
+  <a href="#slides">Slide Map</a>
+  <a href="#priority">Priority</a>
+  <a href="#roadmap">Roadmap</a>
+  <a href="#strategy">Strategy</a>
+</nav>
 
-    <!-- Mobile Header -->
-    <div class="md:hidden fixed top-0 w-full bg-white border-b border-slate-200 z-20 flex justify-between items-center p-4 shadow-sm">
-        <h1 class="text-lg font-bold text-indigo-700">📘 DM Exam Prep</h1>
-        <button id="mobile-menu-btn" class="text-2xl text-slate-600 focus:outline-none">☰</button>
+<!-- HERO -->
+<header class="hero">
+  <div class="tag">Spring 2026 · Midterm Prep</div>
+  <h1>Discrete<br><span>Mathematics</span></h1>
+  <p class="hero-sub">A comprehensive exam study guide built from past paper analysis, lecture slide mapping, and strategic topic prioritization.</p>
+
+  <div class="hero-buttons">
+    <a href="https://notebooklm.google.com/notebook/56229c4c-bd04-4eee-b39d-ab7fdbafc5fb" target="_blank" class="hero-btn btn-notebook">
+      <span>📔</span> NotebookLM
+    </a>
+    <a href="https://drive.google.com/drive/folders/1t7FW7wQaKyCu-M4KZ5OL5xi8JsOEXUJc?usp=sharing" target="_blank" class="hero-btn btn-materials">
+      <span>📂</span> Materials
+    </a>
+  </div>
+
+  <div class="hero-meta">
+    <div class="meta-item">
+      <span class="meta-label">Semesters Analyzed</span>
+      <span class="meta-value">Spring 2023 – Fall 2025</span>
     </div>
-    
-    <!-- Mobile Menu -->
-    <div id="mobile-menu" class="hidden fixed inset-0 bg-slate-800 bg-opacity-50 z-30">
-        <div class="bg-white w-64 h-full shadow-lg flex flex-col">
-            <div class="p-4 border-b flex justify-between items-center bg-slate-50">
-                <span class="font-bold text-indigo-700 text-sm">Navigation</span>
-                <button id="close-menu-btn" class="text-xl text-slate-600">✕</button>
-            </div>
-            <nav class="flex-1 overflow-y-auto py-2" id="mobile-nav-list"></nav>
-        </div>
+    <div class="meta-item">
+      <span class="meta-label">Chapters Covered</span>
+      <span class="meta-value">Ch 1, 2, 3</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Study Phases</span>
+      <span class="meta-value">5 Phases</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">High-Priority Topics</span>
+      <span class="meta-value">8 Topics</span>
+    </div>
+  </div>
+</header>
+
+<div class="dev-credit">Developed by Rafsan</div>
+
+<div class="container">
+
+  <!-- PHASE 1: PATTERNS -->
+  <section id="patterns">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2>Question Paper Pattern Analysis</h2>
+    </div>
+    <p class="phase-label">Phase 1 — Past Paper Insights</p>
+
+    <div class="patterns-grid">
+      <div class="pattern-box">
+        <h3>Repeated High-Weight Topics</h3>
+        <div class="pattern-item"><i class="pattern-icon">◆</i>Truth Table Construction — virtually every paper requires constructing tables for compound propositions or to prove logical equivalences.</div>
+        <div class="pattern-item"><i class="pattern-icon">◆</i>English to Logic Translation — frequent questions translating complex English sentences into propositional or predicate logic.</div>
+        <div class="pattern-item"><i class="pattern-icon">◆</i>Function Properties — defining and distinguishing injective, surjective, and bijective functions.</div>
+        <div class="pattern-item"><i class="pattern-icon">◆</i>Sequences & Summations — finding formulas, AP/GP identification, and double summation calculations.</div>
+        <div class="pattern-item"><i class="pattern-icon">◆</i>Set Operations & Cartesian Products — union, intersection, difference, and power sets.</div>
+      </div>
+
+      <div class="pattern-box">
+        <h3>Question Structure Types</h3>
+        <div class="pattern-item"><i class="pattern-icon">▸</i><strong>Problem-solving exercises</strong> dominate — bit string counting, set operations, summation values.</div>
+        <div class="pattern-item"><i class="pattern-icon">▸</i><strong>Definitions & short explanations</strong> — "tautology," "cardinality," "sum rule" come up regularly for easy marks.</div>
+        <div class="pattern-item"><i class="pattern-icon">▸</i><strong>Proof-based questions</strong> — proofs done via truth tables, not formal induction.</div>
+        <div class="pattern-item"><i class="pattern-icon">▸</i><strong>C Program Implementation</strong> — a unique pattern: C programs using for loops to implement specific summations.</div>
+      </div>
     </div>
 
-    <!-- Main Content Area -->
-    <main class="flex-1 flex flex-col h-full overflow-hidden mt-16 md:mt-0 bg-slate-50 relative">
-        
-        <!-- Top Action Bar -->
-        <div class="bg-white border-b border-slate-200 p-4 flex flex-wrap gap-3 items-center justify-between z-10 shadow-sm">
-            <div class="flex gap-3">
-                <a href="https://notebooklm.google.com/notebook/56229c4c-bd04-4eee-b39d-ab7fdbafc5fb" target="_blank" 
-                   class="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-full transition-all shadow-md hover:shadow-lg active:scale-95">
-                    <span>📔</span> NotebookLM
-                </a>
-                <a href="https://drive.google.com/drive/folders/1t7FW7wQaKyCu-M4KZ5OL5xi8JsOEXUJc?usp=sharing" target="_blank" 
-                   class="flex items-center gap-2 px-5 py-2.5 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-full transition-all border border-slate-200 shadow-sm hover:border-indigo-300 active:scale-95">
-                    <span>📂</span> Materials
-                </a>
-            </div>
-            <div class="hidden lg:flex items-center gap-4 text-xs font-medium text-slate-400">
-                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> System Ready</span>
-                <span class="border-l pl-4 border-slate-200">Exam: Wed, April 1st</span>
-            </div>
+    <div class="callout" style="margin-top:16px;">
+      <strong>Previously Asked but Not Clearly Covered in Slides:</strong> Searching Algorithms (binary/linear search steps + pseudocode), Rules of Inference (Modus Ponens, Hypothetical Syllogism), Permutations & Combinations (proofs involving P(n,r) and C(n,r)).
+    </div>
+  </section>
+
+  <!-- PHASE 2: SLIDE MAP -->
+  <section id="slides">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2>Lecture Slide Mapping</h2>
+    </div>
+    <p class="phase-label">Phase 2 — Know Where to Find It</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Topic</th>
+            <th>Chapter</th>
+            <th>Slides</th>
+            <th>Content Type</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Propositional Equivalences / De Morgan's Laws</td>
+            <td><span class="ch-badge ch1">Ch 1</span></td>
+            <td>pp. 21–24</td>
+            <td>Explanation & Worked Examples</td>
+          </tr>
+          <tr>
+            <td>Predicates and Quantifiers</td>
+            <td><span class="ch-badge ch1">Ch 1</span></td>
+            <td>pp. 27–40</td>
+            <td>Explanation & Practice Problems</td>
+          </tr>
+          <tr>
+            <td>Sets: Power Sets & Cartesian Products</td>
+            <td><span class="ch-badge ch2">Ch 2</span></td>
+            <td>pp. 13–16</td>
+            <td>Definitions & Examples</td>
+          </tr>
+          <tr>
+            <td>Bit Representation of Sets</td>
+            <td><span class="ch-badge ch2">Ch 2</span></td>
+            <td>pp. 27–28</td>
+            <td>Explanation & Worked Examples</td>
+          </tr>
+          <tr>
+            <td>One-to-One and Onto Functions</td>
+            <td><span class="ch-badge ch2">Ch 2</span></td>
+            <td>pp. 36–38</td>
+            <td>Definitions & Worked Examples</td>
+          </tr>
+          <tr>
+            <td>Arithmetic & Geometric Progressions</td>
+            <td><span class="ch-badge ch2">Ch 2</span></td>
+            <td>pp. 42–44</td>
+            <td>Definitions & Formula Finding</td>
+          </tr>
+          <tr>
+            <td>Double Summations</td>
+            <td><span class="ch-badge ch2">Ch 2</span></td>
+            <td>pp. 46–47</td>
+            <td>Worked Example (incl. loop logic)</td>
+          </tr>
+          <tr>
+            <td>The Rule of Product / Sum Rule</td>
+            <td><span class="ch-badge ch3">Ch 3</span></td>
+            <td>pp. 1–5</td>
+            <td>Explanation & Examples</td>
+          </tr>
+          <tr>
+            <td>Inclusion-Exclusion Principle</td>
+            <td><span class="ch-badge ch3">Ch 3</span></td>
+            <td>p. 19</td>
+            <td>Explanation & Bit String Example</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- PHASE 3: PRIORITY -->
+  <section id="priority">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2>Topic Importance Evaluation</h2>
+    </div>
+    <p class="phase-label">Phase 3 — Where to Focus Your Energy</p>
+
+    <div class="cards-grid">
+      <!-- HIGH -->
+      <div class="card high">
+        <div class="card-priority"><span class="dot"></span> High Priority</div>
+        <h3>Tautology, Contradiction & Contingency</h3>
+        <p>Definitions and truth table proofs. In slides + suggestions + papers.</p>
+      </div>
+      <div class="card high">
+        <div class="card-priority"><span class="dot"></span> High Priority</div>
+        <h3>Logical Equivalences</h3>
+        <p>Specifically De Morgan's Laws. Showing equivalence via truth tables is a core exam task.</p>
+      </div>
+      <div class="card high">
+        <div class="card-priority"><span class="dot"></span> High Priority</div>
+        <h3>Conditional Statements</h3>
+        <p>Converse, Contrapositive, and Inverse — phrasing like "whenever," "necessary for," and "unless" are tested.</p>
+      </div>
+      <div class="card high">
+        <div class="card-priority"><span class="dot"></span> High Priority</div>
+        <h3>Functions: Injection, Surjection, Bijection</h3>
+        <p>Definitions and diagrammatic identification. A staple across every semester.</p>
+      </div>
+      <div class="card high">
+        <div class="card-priority"><span class="dot"></span> High Priority</div>
+        <h3>Sequences & Double Summations</h3>
+        <p>Finding formulas for sequences, calculating double sums, and translating to C for loops for free marks.</p>
+      </div>
+
+      <!-- MEDIUM -->
+      <div class="card medium">
+        <div class="card-priority"><span class="dot"></span> Medium Priority</div>
+        <h3>Predicates & Quantifiers</h3>
+        <p>Translating "for all" and "there exists" statements between English and logical symbols.</p>
+      </div>
+      <div class="card medium">
+        <div class="card-priority"><span class="dot"></span> Medium Priority</div>
+        <h3>Set Operations & Cartesian Products</h3>
+        <p>A×B×C computations and bit string representation of sets.</p>
+      </div>
+      <div class="card medium">
+        <div class="card-priority"><span class="dot"></span> Medium Priority</div>
+        <h3>Basics of Counting</h3>
+        <p>Product rule and sum rule applied to bit strings, seating arrangements, and wedding picture problems.</p>
+      </div>
+
+      <!-- LOW -->
+      <div class="card low">
+        <div class="card-priority"><span class="dot"></span> Lower Priority</div>
+        <h3>Precedence of Logical Operators</h3>
+        <p>Only appears in slides — lower frequency in past papers.</p>
+      </div>
+      <div class="card low">
+        <div class="card-priority"><span class="dot"></span> Lower Priority</div>
+        <h3>Uniqueness Quantifiers</h3>
+        <p>Covered in slides only. Deprioritize if time is limited.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHASE 4: ROADMAP -->
+  <section id="roadmap">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2>Sequential Study Roadmap</h2>
+    </div>
+    <p class="phase-label">Phase 4 — Study in This Order</p>
+
+    <div class="roadmap">
+      <div class="roadmap-block">
+        <h3>① Foundations of Logic (Ch 1)</h3>
+        <div class="roadmap-item">
+          <span class="ri-dot high"></span>
+          <div class="ri-content">
+            <div class="ri-title">Proposition, Tautology, Contradiction</div>
+            <div class="ri-type">High · Definition</div>
+          </div>
         </div>
-
-        <div id="content-area" class="flex-1 overflow-y-auto p-6 lg:p-12 scroll-smooth">
-            
-            <!-- SECTION 1: Overview & Pattern Analysis -->
-            <section id="sec-patterns" class="content-section">
-                <header class="mb-10 text-center lg:text-left">
-                    <h2 class="text-4xl font-black text-slate-900 mb-3 flex flex-wrap items-center justify-center lg:justify-start gap-3">
-                        <span class="text-indigo-600">📊</span> Phase 1: Question Pattern Analysis
-                    </h2>
-                    <p class="text-slate-500 text-lg max-w-3xl">
-                        A data-driven breakdown of the Midterm structure. Based on Spring 2023 papers, this identifies the highest ROI topics for your time.
-                    </p>
-                </header>
-
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-12">
-                    <!-- Chart Card -->
-                    <div class="bg-white p-8 rounded-3xl shadow-xl border border-slate-100 relative overflow-hidden">
-                        <h3 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
-                            Weight Distribution <span class="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded uppercase">Historical</span>
-                        </h3>
-                        <div class="chart-container">
-                            <canvas id="questionTypesChart"></canvas>
-                        </div>
-                        <p class="text-sm text-center text-slate-500 mt-6 font-medium">
-                            Calculations and logic evaluations carry the most weight in past papers.
-                        </p>
-                    </div>
-
-                    <!-- Findings -->
-                    <div class="space-y-6">
-                        <div class="glass-card p-8 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
-                            <h3 class="text-lg font-bold text-slate-800 mb-5 border-b border-slate-100 pb-3">Core Exam Observations</h3>
-                            <ul class="space-y-4">
-                                <li class="flex items-start gap-3">
-                                    <div class="bg-indigo-100 p-1 rounded mt-1"><span class="block w-2 h-2 bg-indigo-600 rounded-sm"></span></div>
-                                    <span class="text-sm text-slate-700"><strong>High Probability:</strong> Truth tables for compound propositions and counting rules ($P$ & $C$) consistently appear as 5+ mark questions.</span>
-                                </li>
-                                <li class="flex items-start gap-3">
-                                    <div class="bg-indigo-100 p-1 rounded mt-1"><span class="block w-2 h-2 bg-indigo-600 rounded-sm"></span></div>
-                                    <span class="text-sm text-slate-700"><strong>Direct Marks:</strong> Proving $A \times B \neq B \times A$ and differentiating One-to-One/Onto are standard Part 'b' questions.</span>
-                                </li>
-                                <li class="flex items-start gap-3">
-                                    <div class="bg-indigo-100 p-1 rounded mt-1"><span class="block w-2 h-2 bg-indigo-600 rounded-sm"></span></div>
-                                    <span class="text-sm text-slate-700"><strong>Group Strategy:</strong> Answer 2 out of 3. Typically, Group A focuses on Ch 1 & 2, while Group B hits Ch 3 hard.</span>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="bg-amber-50 p-8 rounded-3xl border border-amber-100">
-                            <h3 class="text-sm font-bold text-amber-800 mb-3 flex items-center gap-2">
-                                <span>⚠️</span> Preparation Gap Alert
-                            </h3>
-                            <p class="text-xs text-amber-700 leading-relaxed">
-                                Past papers include the <strong>Pigeonhole Principle</strong> and the <strong>Permutation Proof</strong> $P(n,r) = C(n,r) \cdot P(r,r)$. Study these from the textbook sections as they are missing from some slide summaries.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- SECTION 2: Topic Priority Matrix -->
-            <section id="sec-priority" class="content-section hidden">
-                <header class="mb-10">
-                    <h2 class="text-3xl font-black text-slate-900 mb-2 flex items-center gap-3">
-                        <span>🧠</span> Phase 3: Priority Matrix
-                    </h2>
-                </header>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div class="bg-white rounded-3xl shadow-sm border-t-8 border-rose-500 border-x border-b border-slate-100 overflow-hidden">
-                        <div class="bg-rose-50 p-6 border-b border-rose-100">
-                            <h3 class="font-bold text-rose-800 text-lg">🔴 High Focus</h3>
-                            <p class="text-[10px] text-rose-600 mt-1 uppercase font-bold tracking-widest">Guaranteed Presence</p>
-                        </div>
-                        <ul class="p-6 space-y-4" id="list-high-priority"></ul>
-                    </div>
-                    <div class="bg-white rounded-3xl shadow-sm border-t-8 border-amber-500 border-x border-b border-slate-100 overflow-hidden">
-                        <div class="bg-amber-50 p-6 border-b border-amber-100">
-                            <h3 class="font-bold text-amber-800 text-lg">🟡 Medium Focus</h3>
-                            <p class="text-[10px] text-amber-600 mt-1 uppercase font-bold tracking-widest">High Probability</p>
-                        </div>
-                        <ul class="p-6 space-y-4" id="list-medium-priority"></ul>
-                    </div>
-                    <div class="bg-white rounded-3xl shadow-sm border-t-8 border-emerald-500 border-x border-b border-slate-100 overflow-hidden">
-                        <div class="bg-emerald-50 p-6 border-b border-emerald-100">
-                            <h3 class="font-bold text-emerald-800 text-lg">🟢 Core Context</h3>
-                            <p class="text-[10px] text-emerald-600 mt-1 uppercase font-bold tracking-widest">Fundamental Knowledge</p>
-                        </div>
-                        <ul class="p-6 space-y-4" id="list-low-priority"></ul>
-                    </div>
-                </div>
-            </section>
-
-            <!-- SECTION 3: Sequential Roadmap -->
-            <section id="sec-roadmap" class="content-section hidden">
-                <header class="mb-10">
-                    <h2 class="text-3xl font-black text-slate-900 mb-2 flex items-center gap-3">
-                        <span>📚</span> Phase 2 & 4: Study Roadmap
-                    </h2>
-                </header>
-                <div class="space-y-6" id="roadmap-container"></div>
-            </section>
-
-            <!-- SECTION 4: Exam Strategy -->
-            <section id="sec-strategy" class="content-section hidden">
-                <header class="mb-10">
-                    <h2 class="text-3xl font-black text-slate-900 mb-2 flex items-center gap-3">
-                        <span>🎯</span> Phase 5: Strategy & Tactics
-                    </h2>
-                </header>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                    <div class="bg-indigo-600 p-1 rounded-3xl shadow-xl">
-                        <div class="bg-white p-8 rounded-[1.4rem]">
-                            <h3 class="text-2xl font-black text-indigo-900 mb-6">The Quick Wins</h3>
-                            <div class="space-y-6">
-                                <div class="flex gap-4 items-start group">
-                                    <div class="bg-indigo-600 text-white rounded-xl w-8 h-8 flex items-center justify-center flex-shrink-0 font-bold">1</div>
-                                    <div>
-                                        <h4 class="font-bold text-slate-800">Truth Tables (5.5 Marks)</h4>
-                                        <p class="text-sm text-slate-500 mt-1">Mechanical marks. Master the implication ($\rightarrow$). $(p \rightarrow q) \vee (\neg p \rightarrow q)$ is a recurring favorite.</p>
-                                    </div>
-                                </div>
-                                <div class="flex gap-4 items-start group">
-                                    <div class="bg-indigo-600 text-white rounded-xl w-8 h-8 flex items-center justify-center flex-shrink-0 font-bold">2</div>
-                                    <div>
-                                        <h4 class="font-bold text-slate-800">Set Equality Proofs</h4>
-                                        <p class="text-sm text-slate-500 mt-1">Proving $A \times B \neq B \times A$. Define your sets $A=\{a,b\}$ and $B=\{1,2\}$ and show specific mismatched pairs like $(a, 1) \neq (1, a)$.</p>
-                                    </div>
-                                </div>
-                                <div class="flex gap-4 items-start group">
-                                    <div class="bg-indigo-600 text-white rounded-xl w-8 h-8 flex items-center justify-center flex-shrink-0 font-bold">3</div>
-                                    <div>
-                                        <h4 class="font-bold text-slate-800">Double Summation</h4>
-                                        <p class="text-sm text-slate-500 mt-1">Solve $\sum \sum i$ by evaluating the inner loop first. It's essentially simple arithmetic.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="space-y-6">
-                        <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
-                            <h3 class="text-xl font-bold text-slate-800 mb-4">Critical Logic Translations</h3>
-                            <div class="bg-slate-50 p-4 rounded-xl space-y-3 font-medium text-slate-700 text-sm">
-                                <div class="flex justify-between border-b pb-2"><span>"p only if q"</span> <span class="text-indigo-600">$p \rightarrow q$</span></div>
-                                <div class="flex justify-between border-b pb-2"><span>"p is necessary for q"</span> <span class="text-indigo-600">$q \rightarrow p$</span></div>
-                                <div class="flex justify-between border-b pb-2"><span>"neither p nor q"</span> <span class="text-indigo-600">$\neg p \wedge \neg q$</span></div>
-                                <div class="flex justify-between"><span>"p is sufficient for q"</span> <span class="text-indigo-600">$p \rightarrow q$</span></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            
-            <footer class="mt-20 pt-10 border-t border-slate-200 text-center text-xs text-slate-400 pb-12 flex flex-col items-center">
-                <p class="mb-2">Discrete Mathematics Exam Preparation Analysis Dashboard</p>
-                <p>Southern University Bangladesh | CSE Dept</p>
-                <p class="mt-6 font-black text-indigo-500 tracking-widest uppercase bg-indigo-50 px-4 py-2 rounded-full">Developed by Rafsan</p>
-            </footer>
-
+        <div class="roadmap-item">
+          <span class="ri-dot high"></span>
+          <div class="ri-content">
+            <div class="ri-title">Truth Tables — All Connectives</div>
+            <div class="ri-type">High · Problem-solving</div>
+          </div>
         </div>
-        
-        <div class="fixed bottom-6 right-8 text-[9px] text-slate-300 font-mono hidden xl:block pointer-events-none select-none">
-            SOUTHERN_UNI_MAR_2026_PREP
+        <div class="roadmap-item">
+          <span class="ri-dot high"></span>
+          <div class="ri-content">
+            <div class="ri-title">De Morgan's Laws (Prove via Truth Table)</div>
+            <div class="ri-type">High · Proof</div>
+          </div>
         </div>
-    </main>
+        <div class="roadmap-item">
+          <span class="ri-dot high"></span>
+          <div class="ri-content">
+            <div class="ri-title">Converse, Inverse, Contrapositive</div>
+            <div class="ri-type">High · Definition / Mixed</div>
+          </div>
+        </div>
+      </div>
 
-    <script>
-        const navItems = [
-            { id: 'sec-patterns', icon: '📊', label: 'Pattern Analysis' },
-            { id: 'sec-priority', icon: '🧠', label: 'Priority Matrix' },
-            { id: 'sec-roadmap', icon: '📚', label: 'Study Roadmap' },
-            { id: 'sec-strategy', icon: '🎯', label: 'Exam Strategy' }
-        ];
+      <div class="roadmap-block">
+        <h3>② Quantified Logic (Ch 1)</h3>
+        <div class="roadmap-item">
+          <span class="ri-dot medium"></span>
+          <div class="ri-content">
+            <div class="ri-title">Predicates & Quantifiers</div>
+            <div class="ri-type">Medium · Mixed</div>
+          </div>
+        </div>
+        <div class="roadmap-item">
+          <span class="ri-dot medium"></span>
+          <div class="ri-content">
+            <div class="ri-title">English ↔ Logical Symbol Translation</div>
+            <div class="ri-type">Medium · Problem-solving</div>
+          </div>
+        </div>
+      </div>
 
-        const roadmapData = [
-            {
-                chapter: "Chapter 1: Logic & Proofs",
-                topics: [
-                    { name: "Truth Tables (Compound)", slide: "21, 24", priority: "High", type: "Calculation", desc: "Evaluating $(p \\rightarrow q) \\vee (\\neg p \\rightarrow q)$ and Tautologies." },
-                    { name: "Logic Implications", slide: "10", priority: "High", type: "Translation", desc: "Symbolic form for 'Neither/Nor', 'Necessary', and 'Sufficient'." },
-                    { name: "Predicates & Quantifiers", slide: "43-45", priority: "Medium", type: "Mixed", desc: "Universal $\\forall$ and Existential $\\exists$ arguments." }
-                ]
-            },
-            {
-                chapter: "Chapter 2: Structures & Sums",
-                topics: [
-                    { name: "Cartesian Product Proof", slide: "15", priority: "High", type: "Proof", desc: "Showing $A \\times B \\neq B \\times A$ using set pairs." },
-                    { name: "Function Mapping", slide: "28-36", priority: "High", type: "Diagrams", desc: "One-to-One vs Onto differentiation." },
-                    { name: "Summations & Sequences", slide: "42-47", priority: "High", type: "Calculation", desc: "Double sums $\\sum\\sum$ and $n$-th term formulas $a_n$." }
-                ]
-            },
-            {
-                chapter: "Chapter 3: Counting Theory",
-                topics: [
-                    { name: "Sum & Product Rules", slide: "10", priority: "High", type: "Mixed", desc: "Sequential tasks vs independent events." },
-                    { name: "Permutation Proof", slide: "Textbook", priority: "High", type: "Proof", desc: "Algebraic proof of $P(n,r) = C(n,r) \\cdot P(r,r)$." },
-                    { name: "Pigeonhole Principle", slide: "Textbook", priority: "Medium", type: "Context", desc: "Application for shared properties." }
-                ]
-            }
-        ];
+      <div class="roadmap-block">
+        <h3>③ Basic Structures (Ch 2)</h3>
+        <div class="roadmap-item">
+          <span class="ri-dot high"></span>
+          <div class="ri-content">
+            <div class="ri-title">Power Sets & Cartesian Products (A×B×C)</div>
+            <div class="ri-type">High · Problem-solving</div>
+          </div>
+        </div>
+        <div class="roadmap-item">
+          <span class="ri-dot high"></span>
+          <div class="ri-content">
+            <div class="ri-title">Injective / Surjective / Bijective Functions</div>
+            <div class="ri-type">High · Definition / Mixed</div>
+          </div>
+        </div>
+        <div class="roadmap-item">
+          <span class="ri-dot medium"></span>
+          <div class="ri-content">
+            <div class="ri-title">Floor & Ceiling Functions</div>
+            <div class="ri-type">Medium · Definition / Problem-solving</div>
+          </div>
+        </div>
+      </div>
 
-        function initNavigation() {
-            const deskNav = document.getElementById('nav-list');
-            const mobNav = document.getElementById('mobile-nav-list');
-            navItems.forEach((item, index) => {
-                const liDesk = document.createElement('li');
-                liDesk.innerHTML = `<button onclick="switchSection('${item.id}', this)" class="w-full text-left px-6 py-3.5 text-sm font-bold transition-all hover:bg-slate-50 ${index === 0 ? 'nav-active' : 'text-slate-500'}">
-                                    <span class="mr-3 text-lg">${item.icon}</span> ${item.label}
-                                </button>`;
-                deskNav.appendChild(liDesk);
-                const liMob = document.createElement('li');
-                liMob.innerHTML = `<button onclick="switchSection('${item.id}', this); closeMobileMenu();" class="w-full text-left px-6 py-4 text-base font-bold transition-all hover:bg-slate-50 ${index === 0 ? 'nav-active' : 'text-slate-500'}">
-                                    <span class="mr-3 text-xl">${item.icon}</span> ${item.label}
-                                </button>`;
-                mobNav.appendChild(liMob);
-            });
-        }
+      <div class="roadmap-block">
+        <h3>④ Sequences & Sums (Ch 2)</h3>
+        <div class="roadmap-item">
+          <span class="ri-dot high"></span>
+          <div class="ri-content">
+            <div class="ri-title">AP & GP — Identify & Find Formulas</div>
+            <div class="ri-type">High · Problem-solving</div>
+          </div>
+        </div>
+        <div class="roadmap-item">
+          <span class="ri-dot high"></span>
+          <div class="ri-content">
+            <div class="ri-title">Double Summations + C for Loop Logic</div>
+            <div class="ri-type">High · Problem-solving</div>
+          </div>
+        </div>
+      </div>
 
-        window.switchSection = function(sectionId, btnElement) {
-            document.querySelectorAll('.content-section').forEach(sec => sec.classList.add('hidden'));
-            document.getElementById(sectionId).classList.remove('hidden');
-            document.querySelectorAll('#nav-list button, #mobile-nav-list button').forEach(btn => {
-                btn.classList.remove('nav-active');
-                btn.classList.add('text-slate-500');
-            });
-            document.querySelectorAll(`button[onclick*="${sectionId}"]`).forEach(btn => {
-                btn.classList.add('nav-active');
-                btn.classList.remove('text-slate-500');
-            });
-            document.getElementById('content-area').scrollTop = 0;
-            if (window.MathJax) MathJax.typesetPromise();
-        };
+      <div class="roadmap-block">
+        <h3>⑤ Counting (Ch 3)</h3>
+        <div class="roadmap-item">
+          <span class="ri-dot medium"></span>
+          <div class="ri-content">
+            <div class="ri-title">Sum & Product Rules (bit strings, seating)</div>
+            <div class="ri-type">Medium · Problem-solving</div>
+          </div>
+        </div>
+        <div class="roadmap-item">
+          <span class="ri-dot medium"></span>
+          <div class="ri-content">
+            <div class="ri-title">Inclusion-Exclusion Principle</div>
+            <div class="ri-type">Medium · Problem-solving</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-        const closeMenuBtn = document.getElementById('close-menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-        mobileMenuBtn.addEventListener('click', () => mobileMenu.classList.remove('hidden'));
-        closeMenuBtn.addEventListener('click', closeMobileMenu);
-        function closeMobileMenu() { mobileMenu.classList.add('hidden'); }
+  <!-- PHASE 5: STRATEGY -->
+  <section id="strategy">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <h2>Exam Strategy</h2>
+    </div>
+    <p class="phase-label">Phase 5 — Win the Exam</p>
 
-        function renderPriorityMatrix() {
-            const highList = document.getElementById('list-high-priority');
-            const medList = document.getElementById('list-medium-priority');
-            const lowList = document.getElementById('list-low-priority');
-            roadmapData.forEach(chapter => {
-                chapter.topics.forEach(topic => {
-                    const li = `<li class="flex items-center justify-between gap-2">
-                                    <div class="text-sm font-semibold text-slate-800">${topic.name}</div>
-                                    <div class="text-[9px] text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100 font-mono">Ch ${chapter.chapter.match(/\d/)[0]}</div>
-                                </li>`;
-                    if (topic.priority === "High") highList.innerHTML += li;
-                    else if (topic.priority === "Medium") medList.innerHTML += li;
-                    else lowList.innerHTML += li;
-                });
-            });
-        }
+    <div class="strategy-grid">
+      <div class="strategy-card">
+        <div class="strategy-num">01</div>
+        <div class="strategy-icon">⚡</div>
+        <h3>Prioritize Problem Solving</h3>
+        <p>The exam is heavily weighted toward calculating values — summations, set operations, bit strings — and constructing truth tables. Drill these types first.</p>
+      </div>
 
-        function renderRoadmap() {
-            const container = document.getElementById('roadmap-container');
-            roadmapData.forEach((chapter, index) => {
-                let topicsHtml = chapter.topics.map(topic => {
-                    const pColor = topic.priority === 'High' ? 'text-rose-600 bg-rose-50' : 'text-amber-600 bg-amber-50';
-                    return `
-                        <div class="p-4 border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors">
-                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                                <div class="flex-1">
-                                    <h4 class="font-bold text-slate-800 text-base mb-1">${topic.name}</h4>
-                                    <p class="text-xs text-slate-500">${topic.desc}</p>
-                                    <div class="text-[10px] text-slate-400 mt-2 uppercase font-bold tracking-tighter">Slide: ${topic.slide}</div>
-                                </div>
-                                <div class="flex gap-2">
-                                    <span class="px-2.5 py-1 text-[10px] font-black rounded-full ${pColor}">${topic.priority}</span>
-                                    <span class="px-2.5 py-1 text-[10px] font-black rounded-full bg-indigo-50 text-indigo-600">${topic.type}</span>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-                container.innerHTML += `
-                    <div class="bg-white border border-slate-200 rounded-[2rem] overflow-hidden shadow-sm">
-                        <button onclick="toggleAccordion('acc-${index}')" class="w-full flex items-center justify-between p-6 hover:bg-slate-50">
-                            <h3 class="font-black text-xl text-slate-900 tracking-tight">${chapter.chapter}</h3>
-                            <span id="icon-acc-${index}" class="text-indigo-400 transform transition-transform duration-300">▼</span>
-                        </button>
-                        <div id="acc-${index}" class="roadmap-content bg-white">
-                            <div class="px-2 pb-2">${topicsHtml}</div>
-                        </div>
-                    </div>
-                `;
-            });
-            setTimeout(() => toggleAccordion('acc-0'), 100);
-        }
+      <div class="strategy-card">
+        <div class="strategy-num">02</div>
+        <div class="strategy-icon">🔺</div>
+        <h3>Master the "Big Three" Proofs</h3>
+        <p>Be prepared to prove: (1) Logical Equivalences via truth tables, (2) Set equalities, and (3) Function types (one-to-one / onto). These appear in every paper.</p>
+      </div>
 
-        window.toggleAccordion = function(id) {
-            const el = document.getElementById(id);
-            const icon = document.getElementById('icon-' + id);
-            if(el.classList.contains('open')) {
-                el.classList.remove('open');
-                icon.style.transform = 'rotate(0deg)';
-            } else {
-                el.classList.add('open');
-                icon.style.transform = 'rotate(180deg)';
-            }
-        };
+      <div class="strategy-card">
+        <div class="strategy-num">03</div>
+        <div class="strategy-icon">✍️</div>
+        <h3>English Fluency in Logic</h3>
+        <p>Practice translating "whenever," "is necessary for," and "unless" into conditional logic. The teacher uses these precise phrasings deliberately to test translation skill.</p>
+      </div>
 
-        function renderChart() {
-            const ctx = document.getElementById('questionTypesChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Problem Solving', 'Theory / Definitions', 'Proofs', 'Logic Translation'],
-                    datasets: [{
-                        data: [45, 20, 20, 15],
-                        backgroundColor: ['#4f46e5', '#10b981', '#8b5cf6', '#f59e0b'],
-                        hoverBackgroundColor: ['#4338ca', '#059669', '#7c3aed', '#d97706'],
-                        borderWidth: 6,
-                        borderColor: '#ffffff',
-                        borderRadius: 8,
-                        hoverOffset: 12
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                usePointStyle: true,
-                                pointStyle: 'circle',
-                                padding: 20,
-                                font: { size: 11, weight: 'bold', family: 'Inter' },
-                                color: '#64748b'
-                            }
-                        },
-                        tooltip: {
-                            backgroundColor: '#1e293b',
-                            padding: 12,
-                            cornerRadius: 10
-                        }
-                    },
-                    cutout: '75%'
-                }
-            });
-        }
+      <div class="strategy-card">
+        <div class="strategy-num">04</div>
+        <div class="strategy-icon">∑</div>
+        <h3>Double Summation = Free Marks</h3>
+        <p>These problems follow a very predictable pattern and carry significant marks. Also ensure you can describe the double-loop logic in a simple C for loop — easy additional points.</p>
+      </div>
 
-        window.onload = () => {
-            initNavigation();
-            renderPriorityMatrix();
-            renderRoadmap();
-            renderChart();
-            if (window.MathJax) MathJax.typesetPromise();
-        };
-    </script>
+      <div class="strategy-card">
+        <div class="strategy-num">05</div>
+        <div class="strategy-icon">📖</div>
+        <h3>Memorize Key Definitions</h3>
+        <p>Definition questions like "Define Power Set" or "What is a Tautology?" are frequent and provide easy marks when memorized directly from the slides.</p>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top: 24px;">
+      <strong>Quick Reminder:</strong> Topics previously asked but not clearly covered in slides — <strong>Binary/Linear Search</strong>, <strong>Modus Ponens / Rules of Inference</strong>, and <strong>P(n,r) / C(n,r) proofs</strong> — may appear again. If time permits, review these from a textbook for potential bonus marks.
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  Discrete Mathematics Exam Guide · Spring 2023 – Fall 2025 Analysis
+</footer>
+
+<script>
+  // Scroll-triggered reveal
+  const sections = document.querySelectorAll('section');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+
+  sections.forEach(s => observer.observe(s));
+
+  // Nav active highlighting
+  const navLinks = document.querySelectorAll('.nav a');
+  const sectionEls = document.querySelectorAll('section[id]');
+
+  const navObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(l => l.style.color = '');
+        const active = document.querySelector(`.nav a[href="#${e.target.id}"]`);
+        if (active) { active.style.color = '#ff3c3c'; active.style.borderBottomColor = '#ff3c3c'; }
+        else navLinks.forEach(l => l.style.borderBottomColor = 'transparent');
+      }
+    });
+  }, { rootMargin: '-40% 0px -40% 0px' });
+
+  sectionEls.forEach(s => navObserver.observe(s));
+</script>
 </body>
 </html>
