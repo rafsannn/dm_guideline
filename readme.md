@@ -31,24 +31,6 @@ A clean, interactive study guide dashboard for the **Discrete Mathematics** midt
 
 ---
 
-## 🚀 Usage
-
-No build step required. Just open `dm-dashboard.html` in any modern browser — or serve with any static file server:
-
-```bash
-# Python
-python -m http.server 8000
-
-# Node
-npx serve .
-```
-
-Then visit `http://localhost:8000/dm-dashboard.html`
-
-> **Note:** All three files (`dm-dashboard.html`, `style.css`, `script.js`) must be in the **same directory**.
-
----
-
 ## 🔗 Quick Links
 
 | Resource | Link |
