@@ -350,10 +350,7 @@ body {
 
 /* Chart */
 .chart-grid { display:grid; grid-template-columns:360px 1fr; gap:18px; margin-bottom:24px; }
-.chart-wrap { position:relative; height:250px; display:flex; align-items:center; justify-content:center; }
-.chart-center-label { position:absolute; text-align:center; pointer-events:none; }
-.chart-center-label .big { font-family:'Playfair Display',serif; font-size:28px; font-weight:900; color:var(--text); }
-.chart-center-label .small { font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:0.12em; font-family:'JetBrains Mono',monospace; }
+.chart-wrap { position:relative; width:100%; }
 
 /* Findings */
 .findings-list { list-style:none; }
@@ -688,10 +685,6 @@ body {
           <div class="card-body">
             <div class="chart-wrap">
               <canvas id="donutChart"></canvas>
-              <div class="chart-center-label">
-                <div class="big">4</div>
-                <div class="small">Categories</div>
-              </div>
             </div>
           </div>
         </div>
@@ -1075,47 +1068,68 @@ function toggleMobileMenu() {
 /* ── CHART ── */
 function renderChart() {
   const ctx = document.getElementById('donutChart').getContext('2d');
+
+  // Plugin draws label directly onto canvas — always perfectly centered in the hole
+  const centerLabel = {
+    id: 'centerLabel',
+    afterDraw(chart) {
+      const { ctx: c, chartArea } = chart;
+      if (!chartArea) return;
+      const cx = (chartArea.left + chartArea.right) / 2;
+      const cy = (chartArea.top + chartArea.bottom) / 2;
+      c.save();
+      c.textAlign = 'center';
+      c.textBaseline = 'middle';
+      c.font = "900 26px 'Playfair Display', serif";
+      c.fillStyle = '#1e1b4b';
+      c.fillText('4', cx, cy - 8);
+      c.font = "500 9px 'JetBrains Mono', monospace";
+      c.fillStyle = '#9ca3af';
+      c.fillText('CATEGORIES', cx, cy + 11);
+      c.restore();
+    }
+  };
+
   new Chart(ctx, {
     type: 'doughnut',
+    plugins: [centerLabel],
     data: {
       labels: ['Problem Solving', 'Theory / Definitions', 'Proofs', 'Logic Translation'],
       datasets: [{
         data: [45, 20, 20, 15],
         backgroundColor: ['#6366f1','#059669','#d97706','#f43f5e'],
         borderWidth: 0,
-        hoverOffset: 10,
-        borderRadius: 6,
-        spacing: 4
+        hoverOffset: 8,
+        borderRadius: 5,
+        spacing: 3
       }]
     },
     options: {
       responsive: true,
-      maintainAspectRatio: false,
+      maintainAspectRatio: true,
       plugins: {
         legend: {
           position: 'bottom',
           labels: {
             usePointStyle: true,
             pointStyle: 'circle',
-            padding: 18,
+            padding: 16,
             font: { size: 11, weight: '600', family: 'JetBrains Mono' },
             color: '#6b7280'
           }
         },
         tooltip: {
-          backgroundColor: 'rgba(255,255,255,0.95)',
-          borderColor: 'rgba(99,102,241,0.2)',
+          backgroundColor: 'rgba(255,255,255,0.96)',
+          borderColor: 'rgba(99,102,241,0.18)',
           borderWidth: 1,
-          padding: 12,
+          padding: 10,
           cornerRadius: 8,
           titleColor: '#1e1b4b',
           bodyColor: '#6b7280',
-          callbacks: {
-            label: ctx => `  ${ctx.parsed}% of exam weight`
-          }
+          callbacks: { label: c => `  ${c.parsed}% of exam weight` }
         }
       },
-      cutout: '70%'
+      cutout: '68%'
     }
   });
 }
